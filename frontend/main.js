@@ -41,6 +41,9 @@ Vue.use(VueIziToast, {
 	transitionIn: "fadeInDown",
 });
 
+// --- VUETIFY ---
+import "./vuetify";
+
 // Authenticator
 import authenticator from "./authenticator";
 Vue.prototype.$authenticator = authenticator;
