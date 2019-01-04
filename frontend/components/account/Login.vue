@@ -1,43 +1,44 @@
 <template>
-<page-content>
-	<page-center>
-		<div class="auth-panel">
-			<logo />
-			<h4>Sign In</h4>
-			<form @submit.prevent="submit">
-				<div v-if="error" class="alert error">{{ error }}</div>
-				<div v-if="success" class="alert success">{{ success }}</div>
-				<fieldset class="email">
-					<input type="text" name="email" v-model="email" placeholder="E-mail or username" />
-					<i class="fa fa-user"></i>
-				</fieldset>
-				<fieldset class="password">
-					<input type="password" name="password" v-model="password" placeholder="Password" />
-					<i class="fa fa-key"></i>
-					<!-- div class="remember">
-						<input type="checkbox" id="remember" v-model="remember" />
-						<label for="remember">Remember me</label>
-					</div -->
-					<div class="forgot">
-						<router-link to="/forgot-password">Forgot password?</router-link>
+	<v-container fill-height>
+		<v-layout align-center justify-center>
+			<v-flex xs12 sm8 md4>
+				<v-card class="elevation-12" color="grey darken-4">
+
+					<div class="pa-4">
+						<v-card-title>
+							<span class="title">Sign In</span>
+						</v-card-title>
+						<v-card-text>
+							<v-form @submit.prevent="submit">
+								<div v-if="error" class="alert error">{{ error }}</div>
+								<div v-if="success" class="alert success">{{ success }}</div>
+
+								<v-text-field name="email" v-model="email" label="E-mail or username" append-icon="person"></v-text-field>
+								<v-text-field name="password" type="password" v-model="password" label="Password" append-icon="lock"></v-text-field>
+								<div class="forgot">
+									<router-link to="/forgot-password">
+										<span class="caption" small>Forgot password?</span>
+									</router-link>
+								</div>
+								<v-text-field v-if="need2FAToken" name="token" v-model="token" ref="token" label="Two-factor code" append-icon="unlock"></v-text-field>
+
+								<social-auth />
+
+								<span class="caption">Don't have an account?
+									<router-link to="/signup">Sign Up</router-link>
+								</span>
+							</v-form>
+						</v-card-text>
+						<v-card-actions>
+							<v-spacer></v-spacer>
+							<v-btn color="primary" :loading="processing" type="submit" large>Login</v-btn>
+						</v-card-actions>
 					</div>
-				</fieldset>
-				<fieldset v-if="need2FAToken" class="token">
-					<input type="text" name="token" v-model="token" ref="token" placeholder="Two-factor code" />
-					<i class="fa fa-key"></i>
-				</fieldset>
-				<fieldset>
-					<submit-button :loading="processing" size="large" color="primary" caption="Login" />
-				</fieldset>
-				<social-auth />
-				<fieldset class="already">
-					<span>Don't have an account?</span>
-					<router-link to="/signup">Sign Up</router-link>
-				</fieldset>
-			</form>
-		</div>
-	</page-center>
-</page-content>
+
+				</v-card>
+			</v-flex>
+		</v-layout>
+	</v-container>
 </template>
 
 <script>
@@ -80,3 +81,10 @@ export default {
 	}
 };
 </script>
+
+<style lang="scss" scoped>
+	.forgot {
+		margin-top: -24px;
+		text-align: right;
+	}
+</style>

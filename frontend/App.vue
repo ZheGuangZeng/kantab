@@ -1,46 +1,43 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/style-guide">Style Guide</router-link> |
-      <router-link to="/protected">Protected</router-link> |
-      <router-link to="/about">{{ $t("About") }}</router-link> |
-	  <template v-if="!$authenticator.isAuthenticated()">
-		<router-link to="/login">Login</router-link> |
-		<router-link to="/signup">Sign Up</router-link> |
-	  </template>
-	  <template v-else>
-		<a href="#" @click="$authenticator.logout()">Logout</a> |
-	  </template>
-    </div>
-    <router-view/>
-  </div>
+	<v-app id="app" dark>
+	<v-toolbar fixed dense app>
+		<Logo class="pr-4" />
+		<v-toolbar-items class="hidden-sm-and-down">
+			<v-btn flat to="/" exact>Home</v-btn>
+			<v-btn flat to="/style-guide">Style Guide</v-btn>
+			<v-btn flat to="/protected">Protected</v-btn>
+			<v-btn flat to="/about">{{ $t("About") }}</v-btn>
+			<template v-if="!$authenticator.isAuthenticated()">
+				<v-btn flat to="/login">Login</v-btn>
+				<v-btn flat to="/signup">Sign Up</v-btn>
+			</template>
+			<template v-else>
+				<v-btn flat @click="$authenticator.logout()">Logout</v-btn>
+			</template>
+		</v-toolbar-items>
+	</v-toolbar>
+	<v-content>
+		<keep-alive>
+			<router-view/>
+		</keep-alive>
+	</v-content>
+  </v-app>
 </template>
 
 <script>
 import store from "./store";
+import Logo from "./components/account/partials/Logo";
 
 export default {
+	components: {
+		Logo
+	},
 	created() {
 		store.dispatch("init");
 	}
 };
 </script>
 
-
-<style lang="scss" src="./styles/style.scss">
-</style>
-
 <style lang="scss" scoped>
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #e4eaf1;
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
 
 </style>

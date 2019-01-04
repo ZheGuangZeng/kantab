@@ -39,40 +39,47 @@ export default {
 
 <style lang="scss" scoped>
 
-.social-icons {
-	margin: 1em 0;
-	text-align: center;
-
-	a {
-		margin: 0 1em;
-
-		svg {
-			width: 48px;
-			height: 48px;
-			transform: scale(1.0);
-
-			&:hover {
-				transform: scale(1.2);
-				transition: transform 0.2s ease-in-out;
-			}
-		}
-
-		&.google svg path {
-			fill: #DC4E41;
-		}
-
-		&.facebook svg path {
-			fill: #3B5998;
-		}
-
-		&.twitter svg path {
-			fill: #1DA1F2;
-		}
-
-		&.github svg path {
-			fill: white;
-		}
-
+	hr {
+		width: 100%;
+		margin: 1em 0;
+		border: 0;
+		border-top: 1px solid rgba(white, 0.3);
 	}
-}
+
+	.social-icons {
+		margin: 1em 0;
+		text-align: center;
+
+		a {
+			margin: 0 1em;
+
+			svg {
+				width: 40px;
+				height: 40px;
+				transform: scale(1.0);
+				transition: transform 0.2s ease-in-out;
+
+				&:hover {
+					transform: scale(1.2);
+				}
+			}
+
+			&.google svg path {
+				fill: #DC4E41;
+			}
+
+			&.facebook svg path {
+				fill: #3B5998;
+			}
+
+			&.twitter svg path {
+				fill: #1DA1F2;
+			}
+
+			&.github svg path {
+				fill: white;
+			}
+
+		}
+	}
 </style>

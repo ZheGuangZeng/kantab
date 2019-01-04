@@ -44,6 +44,8 @@ Vue.use(VueIziToast, {
 // --- VUETIFY ---
 import "./vuetify";
 
+import "./styles/style.scss";
+
 // Authenticator
 import authenticator from "./authenticator";
 Vue.prototype.$authenticator = authenticator;

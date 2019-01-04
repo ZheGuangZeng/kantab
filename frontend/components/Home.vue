@@ -1,20 +1,13 @@
 <template>
 	<dir>
-		<Logo/>
 		<h4>Home</h4>
-		<button @click="getBoards">Get boards</button>
+		<v-btn color="primary" @click="getBoards">Get boards</v-btn>
 		<pre v-if="boards"><code>{{ boards }}</code></pre>
 	</dir>
 </template>
 
 <script>
-import Logo from "./account/partials/Logo";
-
 export default {
-	components: {
-		Logo
-	},
-
 	data() {
 		return {
 			boards: null
