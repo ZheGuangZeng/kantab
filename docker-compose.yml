@@ -1,7 +1,6 @@
 version: "3.0"
 
 services:
-
   api:
     build:
       context: .
@@ -47,70 +46,70 @@ services:
       - redis
       - mongo
 
-  boards:
-    build:
-      context: .
-    image: kantab
-    restart: unless-stopped
-    env_file: docker-compose.env
-    environment:
-      SERVICES: boards
-    depends_on:
-      - nats
-      - redis
-      - mongo
+  # boards:
+  #   build:
+  #     context: .
+  #   image: kantab
+  #   restart: unless-stopped
+  #   env_file: docker-compose.env
+  #   environment:
+  #     SERVICES: boards
+  #   depends_on:
+  #     - nats
+  #     - redis
+  #     - mongo
 
-  card-activities:
-    build:
-      context: .
-    image: kantab
-    restart: unless-stopped
-    env_file: docker-compose.env
-    environment:
-      SERVICES: card.activities
-    depends_on:
-      - nats
-      - redis
-      - mongo
+  # card-activities:
+  #   build:
+  #     context: .
+  #   image: kantab
+  #   restart: unless-stopped
+  #   env_file: docker-compose.env
+  #   environment:
+  #     SERVICES: card.activities
+  #   depends_on:
+  #     - nats
+  #     - redis
+  #     - mongo
 
-  card-attachments:
-    build:
-      context: .
-    image: kantab
-    restart: unless-stopped
-    env_file: docker-compose.env
-    environment:
-      SERVICES: card.attachments
-    depends_on:
-      - nats
-      - redis
-      - mongo
+  # card-attachments:
+  #   build:
+  #     context: .
+  #   image: kantab
+  #   restart: unless-stopped
+  #   env_file: docker-compose.env
+  #   environment:
+  #     SERVICES: card.attachments
+  #   depends_on:
+  #     - nats
+  #     - redis
+  #     - mongo
 
-  card-checklists:
-    build:
-      context: .
-    image: kantab
-    restart: unless-stopped
-    env_file: docker-compose.env
-    environment:
-      SERVICES: card.checklists
-    depends_on:
-      - nats
-      - redis
-      - mongo
+  # card-checklists:
+  #   build:
+  #     context: .
+  #   image: kantab
+  #   restart: unless-stopped
+  #   env_file: docker-compose.env
+  #   environment:
+  #     SERVICES: card.checklists
+  #   depends_on:
+  #     - nats
+  #     - redis
+  #     - mongo
 
-  cards:
-    build:
-      context: .
-    image: kantab
-    restart: unless-stopped
-    env_file: docker-compose.env
-    environment:
-      SERVICES: cards
-    depends_on:
-      - nats
-      - redis
-      - mongo
+  # cards:
+  #   build:
+  #     context: .
+  #   image: kantab
+  #   restart: unless-stopped
+  #   env_file: docker-compose.env
+  #   environment:
+  #     SERVICES: cards
+  #   depends_on:
+  #     - nats
+  #     - redis
+  #     - mongo
 
   config:
     build:
@@ -125,18 +124,18 @@ services:
       - redis
       - mongo
 
-  lists:
-    build:
-      context: .
-    image: kantab
-    restart: unless-stopped
-    env_file: docker-compose.env
-    environment:
-      SERVICES: lists
-    depends_on:
-      - nats
-      - redis
-      - mongo
+  # lists:
+  #   build:
+  #     context: .
+  #   image: kantab
+  #   restart: unless-stopped
+  #   env_file: docker-compose.env
+  #   environment:
+  #     SERVICES: lists
+  #   depends_on:
+  #     - nats
+  #     - redis
+  #     - mongo
 
   mail:
     build:
@@ -202,10 +201,10 @@ services:
       - ./monitoring/prometheus/:/etc/prometheus/
       - prometheus_data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
     ports:
       - 9090:9090
     links:
@@ -222,8 +221,8 @@ services:
       - ./monitoring/alertmanager/:/etc/alertmanager/
     restart: unless-stopped
     command:
-      - '--config.file=/etc/alertmanager/config.yml'
-      - '--storage.path=/alertmanager'
+      - "--config.file=/etc/alertmanager/config.yml"
+      - "--storage.path=/alertmanager"
 
   # Grafana UI
   grafana:
