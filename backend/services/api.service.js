@@ -1,23 +1,29 @@
 "use strict";
 
-const ApiGateway 		= require("moleculer-web");
-const _ 				= require("lodash");
-const helmet 			= require("helmet");
-const fs 				= require("fs");
-const cookie 			= require("cookie");
-const C 				= require("../constants");
+const ApiGateway = require("moleculer-web");
+const _ = require("lodash");
+const helmet = require("helmet");
+const fs = require("fs");
+const cookie = require("cookie");
+const C = require("../constants");
 
-const PassportMixin 	= require("../mixins/passport.mixin");
-const I18NextMixin 		= require("../mixins/i18next.mixin");
-const { ApolloService } = require("moleculer-apollo-server");
-const OpenApiMixin 		= require("../mixins/openapi.mixin");
-const SocketIOMixin		= require("moleculer-io");
+const PassportMixin = require("../mixins/passport.mixin");
+const I18NextMixin = require("../mixins/i18next.mixin");
+const {
+	ApolloService
+} = require("moleculer-apollo-server");
+const OpenApiMixin = require("../mixins/openapi.mixin");
+const SocketIOMixin = require("moleculer-io");
 
-const { GraphQLError } 				= require("graphql");
-const Kind							= require("graphql/language").Kind;
+const {
+	GraphQLError
+} = require("graphql");
+const Kind = require("graphql/language").Kind;
 
-const depthLimit 					= require("graphql-depth-limit");
-const { createComplexityLimitRule } = require("graphql-validation-complexity");
+const depthLimit = require("graphql-depth-limit");
+const {
+	createComplexityLimitRule
+} = require("graphql-validation-complexity");
 
 /**
  * Initialize Webpack middleware in development
@@ -26,14 +32,14 @@ function initWebpackMiddlewares() {
 	if (process.env.NODE_ENV == "production")
 		return [];
 
-	const webpack	 		= require("webpack");
-	const devMiddleware 	= require("webpack-dev-middleware");
-	const hotMiddleware 	= require("webpack-hot-middleware");
-	const config 			= _.cloneDeep(require("@vue/cli-service/webpack.config.js"));
+	const webpack = require("webpack");
+	const devMiddleware = require("webpack-dev-middleware");
+	const hotMiddleware = require("webpack-hot-middleware");
+	const config = _.cloneDeep(require("@vue/cli-service/webpack.config.js"));
 
 	config.entry.app.unshift("webpack-hot-middleware/client");
 	//require("fs").writeFileSync("./webpack.generated.config.js", JSON.stringify(config, null, 4), "utf8");
-	const compiler 			= webpack(config);
+	const compiler = webpack(config);
 
 
 	return [
@@ -41,8 +47,12 @@ function initWebpackMiddlewares() {
 		devMiddleware(compiler, {
 			noInfo: true,
 			publicPath: config.output.publicPath,
-			headers: { "Access-Control-Allow-Origin": "*" },
-			stats: { colors: true }
+			headers: {
+				"Access-Control-Allow-Origin": "*"
+			},
+			stats: {
+				colors: true
+			}
 		}),
 
 		// Webpack hot replacement
@@ -121,7 +131,9 @@ module.exports = {
 					createComplexityLimitRule(1000, {
 						createError(cost, documentNode) {
 							const error = new GraphQLError("custom error", [documentNode]);
-							error.meta = { cost };
+							error.meta = {
+								cost
+							};
 							return error;
 						}
 					})
@@ -163,7 +175,7 @@ module.exports = {
 				authentication: true,
 				//authorization: true,
 
-				autoAliases: true,
+				// autoAliases: true,
 
 				aliases: {},
 
@@ -172,8 +184,13 @@ module.exports = {
 
 				// Use bodyparser modules
 				bodyParsers: {
-					json: { limit: "2MB" },
-					urlencoded: { extended: true, limit: "2MB" }
+					json: {
+						limit: "2MB"
+					},
+					urlencoded: {
+						extended: true,
+						limit: "2MB"
+					}
 				},
 			},
 
@@ -195,8 +212,7 @@ module.exports = {
 				],
 
 				// Action aliases
-				aliases: {
-				},
+				aliases: {},
 
 				mappingPolicy: "restrict",
 			},
@@ -232,9 +248,15 @@ module.exports = {
 
 			if (token) {
 				// Verify JWT token
-				const user = await ctx.call("v1.accounts.resolveToken", { token });
+				const user = await ctx.call("v1.accounts.resolveToken", {
+					token
+				});
 				if (user) {
-					this.logger.info("User authenticated via JWT.", { username: user.username, email: user.email, id: user.id });
+					this.logger.info("User authenticated via JWT.", {
+						username: user.username,
+						email: user.email,
+						id: user.id
+					});
 
 					ctx.meta.roles.push(C.ROLE_AUTHENTICATED);
 					if (Array.isArray(user.roles))
@@ -253,14 +275,16 @@ module.exports = {
 		async signInSocialUser(params, cb) {
 			try {
 				cb(null, await this.broker.call("v1.accounts.socialLogin", params));
-			} catch(err) {
+			} catch (err) {
 				cb(err);
 			}
 		},
 	},
 
 	events: {
-		"graphql.schema.updated"({ schema }) {
+		"graphql.schema.updated"({
+			schema
+		}) {
 			this.logger.info("Generated GraphQL schema:\n\n" + schema);
 			fs.writeFileSync("./schema.gql", schema, "utf8");
 		}
