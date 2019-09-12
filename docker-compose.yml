@@ -164,7 +164,7 @@ services:
 
   # NATS for transporter
   nats:
-    image: nats:1.3.0
+    image: nats:2.0.4
     ports:
       - "4222:4222"
     restart: unless-stopped
