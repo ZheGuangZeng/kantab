@@ -1,17 +1,20 @@
 "use strict";
 
-const crypto 		= require("crypto");
-const bcrypt 		= require("bcrypt");
-const _ 			= require("lodash");
+const crypto = require("crypto");
+const bcrypt = require("bcrypt");
+const _ = require("lodash");
 
-const jwt 			= require("jsonwebtoken");
-const speakeasy		= require("speakeasy");
+const jwt = require("jsonwebtoken");
+const speakeasy = require("speakeasy");
 
-const DbService 	= require("../mixins/db.mixin");
-const CacheCleaner 	= require("../mixins/cache.cleaner.mixin");
-const ConfigLoader 	= require("../mixins/config.mixin");
-const { MoleculerRetryableError, MoleculerClientError } = require("moleculer").Errors;
-const C 			= require("../constants");
+const DbService = require("../mixins/db.mixin");
+const CacheCleaner = require("../mixins/cache.cleaner.mixin");
+const ConfigLoader = require("../mixins/config.mixin");
+const {
+	MoleculerRetryableError,
+	MoleculerClientError
+} = require("moleculer").Errors;
+const C = require("../constants");
 
 const HASH_SALT_ROUND = 10;
 
@@ -37,8 +40,7 @@ module.exports = {
 	/**
 	 * Service dependencies
 	 */
-	dependencies: [
-	],
+	dependencies: [],
 
 	/**
 	 * Service settings
@@ -51,27 +53,94 @@ module.exports = {
 		},
 
 		fields: {
-			id: { type: "string", readonly: true, primaryKey: true, secure: true, columnName: "_id" },
-			username: { type: "string", maxlength: 50, required: true },
-			firstName: { type: "string", maxlength: 50, required: true },
-			lastName: { type: "string", maxlength: 50, required: true },
-			email: { type: "string", maxlength: 100, required: true },
-			password: { type: "string", minlength: 6, maxlength: 60, hidden: true },
-			avatar: { type: "string" },
-			roles: { required: true },
-			socialLinks: { type: "object" },
-			status: { type: "number", default: 1 },
-			plan: { type: "string", required: true },
-			verified: { type: "boolean", default: false },
-			token: { type: "string", readonly: true },
-			"totp.enabled": { type: "boolean", default: false },
-			passwordless: { type: "boolean", default: false },
-			passwordlessTokenExpires: { hidden: true },
-			resetTokenExpires: { hidden: true },
-			verificationToken: { hidden: true },
-			createdAt: { type: "number", updateable: false, default: Date.now },
-			updatedAt: { type: "number", readonly: true, updateDefault: Date.now },
-			lastLoginAt: { type: "number" },
+			id: {
+				type: "string",
+				readonly: true,
+				primaryKey: true,
+				secure: true,
+				columnName: "_id"
+			},
+			username: {
+				type: "string",
+				maxlength: 50,
+				required: true
+			},
+			firstName: {
+				type: "string",
+				maxlength: 50,
+				required: true
+			},
+			lastName: {
+				type: "string",
+				maxlength: 50,
+				required: true
+			},
+			email: {
+				type: "string",
+				maxlength: 100,
+				required: true
+			},
+			password: {
+				type: "string",
+				minlength: 6,
+				maxlength: 60,
+				hidden: true
+			},
+			avatar: {
+				type: "string"
+			},
+			roles: {
+				required: true
+			},
+			socialLinks: {
+				type: "object"
+			},
+			status: {
+				type: "number",
+				default: 1
+			},
+			plan: {
+				type: "string",
+				required: true
+			},
+			verified: {
+				type: "boolean",
+				default: false
+			},
+			token: {
+				type: "string",
+				readonly: true
+			},
+			"totp.enabled": {
+				type: "boolean",
+				default: false
+			},
+			passwordless: {
+				type: "boolean",
+				default: false
+			},
+			passwordlessTokenExpires: {
+				hidden: true
+			},
+			resetTokenExpires: {
+				hidden: true
+			},
+			verificationToken: {
+				hidden: true
+			},
+			createdAt: {
+				type: "number",
+				updateable: false,
+				default: Date.now
+			},
+			updatedAt: {
+				type: "number",
+				readonly: true,
+				updateDefault: Date.now
+			},
+			lastLoginAt: {
+				type: "number"
+			},
 		},
 
 		graphql: {
@@ -229,12 +298,31 @@ module.exports = {
 		 */
 		register: {
 			params: {
-				username: { type: "string", min: 3, optional: true },
-				password: { type: "string", min: 8, optional: true },
-				email: { type: "email" },
-				firstName: { type: "string", min: 2 },
-				lastName: { type: "string", min: 2 },
-				avatar: { type: "string", optional: true },
+				username: {
+					type: "string",
+					min: 3,
+					optional: true
+				},
+				password: {
+					type: "string",
+					min: 8,
+					optional: true
+				},
+				email: {
+					type: "email"
+				},
+				firstName: {
+					type: "string",
+					min: 2
+				},
+				lastName: {
+					type: "string",
+					min: 2
+				},
+				avatar: {
+					type: "string",
+					optional: true
+				},
 			},
 			rest: "GET /register",
 			async handler(ctx) {
@@ -307,7 +395,9 @@ module.exports = {
 					user.token = await this.getToken(user);
 				} else {
 					// Send verification email
-					this.sendMail(ctx, user, "activate", { token: entity.verificationToken });
+					this.sendMail(ctx, user, "activate", {
+						token: entity.verificationToken
+					});
 				}
 
 				return this.transformDocuments(ctx, {}, user);
@@ -319,18 +409,24 @@ module.exports = {
 		 */
 		verify: {
 			params: {
-				token: { type: "string" }
+				token: {
+					type: "string"
+				}
 			},
 			rest: "GET /verify",
 			async handler(ctx) {
-				const user = await this.adapter.findOne({ verificationToken: ctx.params.token });
+				const user = await this.adapter.findOne({
+					verificationToken: ctx.params.token
+				});
 				if (!user)
 					throw new MoleculerClientError("Invalid verification token!", 400, "INVALID_TOKEN");
 
-				const res = await this.adapter.updateById(user._id, { $set: {
-					verified: true,
-					verificationToken: null
-				} });
+				const res = await this.adapter.updateById(user._id, {
+					$set: {
+						verified: true,
+						verificationToken: null
+					}
+				});
 
 				// Send welcome email
 				this.sendMail(ctx, res, "welcome");
@@ -346,7 +442,9 @@ module.exports = {
 		 */
 		disable: {
 			params: {
-				id: { type: "string" }
+				id: {
+					type: "string"
+				}
 			},
 			needEntity: true,
 			async handler(ctx) {
@@ -354,9 +452,11 @@ module.exports = {
 				if (user.status == 0)
 					throw new MoleculerClientError("Account has already been disabled!", 400, "ERR_USER_ALREADY_DISABLED");
 
-				const res = await this.adapter.updateById(user._id, { $set: {
-					status: 0
-				} });
+				const res = await this.adapter.updateById(user._id, {
+					$set: {
+						status: 0
+					}
+				});
 
 				return {
 					status: res.status
@@ -369,7 +469,9 @@ module.exports = {
 		 */
 		enable: {
 			params: {
-				id: { type: "string" }
+				id: {
+					type: "string"
+				}
 			},
 			needEntity: true,
 			async handler(ctx) {
@@ -377,9 +479,11 @@ module.exports = {
 				if (user.status == 1)
 					throw new MoleculerClientError("Account has already been enabled!", 400, "ERR_USER_ALREADY_ENABLED");
 
-				const res = await this.adapter.updateById(user._id, { $set: {
-					status: 1
-				} });
+				const res = await this.adapter.updateById(user._id, {
+					$set: {
+						status: 1
+					}
+				});
 
 				return {
 					status: res.status
@@ -392,14 +496,18 @@ module.exports = {
 		 */
 		passwordless: {
 			params: {
-				token: { type: "string" }
+				token: {
+					type: "string"
+				}
 			},
 			rest: "GET /passwordless",
 			async handler(ctx) {
 				if (!this.config["accounts.passwordless.enabled"])
 					throw new MoleculerClientError("Passwordless login is not allowed.", 400, "ERR_PASSWORDLESS_DISABLED");
 
-				const user = await this.adapter.findOne({ passwordlessToken: ctx.params.token });
+				const user = await this.adapter.findOne({
+					passwordlessToken: ctx.params.token
+				});
 				if (!user)
 					throw new MoleculerClientError("Invalid token!", 400, "INVALID_TOKEN");
 
@@ -413,9 +521,11 @@ module.exports = {
 
 				// Verified account if not
 				if (!user.verified) {
-					await this.adapter.updateById(user._id, { $set: {
-						verified: true
-					} });
+					await this.adapter.updateById(user._id, {
+						$set: {
+							verified: true
+						}
+					});
 				}
 
 				return {
@@ -429,7 +539,9 @@ module.exports = {
 		 */
 		forgotPassword: {
 			params: {
-				email: { type: "email" }
+				email: {
+					type: "email"
+				}
 			},
 			rest: "GET /forgotPassword",
 			async handler(ctx) {
@@ -449,13 +561,17 @@ module.exports = {
 					throw new MoleculerClientError("Account is disabled!", 400, "ERR_ACCOUNT_DISABLED");
 
 				// Save the token to user
-				await this.adapter.updateById(user._id, { $set: {
-					resetToken: token,
-					resetTokenExpires: Date.now() + 3600 * 1000 // 1 hour
-				} });
+				await this.adapter.updateById(user._id, {
+					$set: {
+						resetToken: token,
+						resetTokenExpires: Date.now() + 3600 * 1000 // 1 hour
+					}
+				});
 
 				// Send a passwordReset email
-				this.sendMail(ctx, user, "reset-password", { token });
+				this.sendMail(ctx, user, "reset-password", {
+					token
+				});
 
 				return true;
 			}
@@ -466,13 +582,20 @@ module.exports = {
 		 */
 		resetPassword: {
 			params: {
-				token: { type: "string" },
-				password: { type: "string", min: 8 }
+				token: {
+					type: "string"
+				},
+				password: {
+					type: "string",
+					min: 8
+				}
 			},
 			rest: "GET /resetPassword",
 			async handler(ctx) {
 				// Check the token & expires
-				const user = await this.adapter.findOne({ resetToken: ctx.params.token });
+				const user = await this.adapter.findOne({
+					resetToken: ctx.params.token
+				});
 				if (!user)
 					throw new MoleculerClientError("Invalid token!", 400, "INVALID_TOKEN");
 
@@ -484,13 +607,15 @@ module.exports = {
 					throw new MoleculerClientError("Token expired!", 400, "TOKEN_EXPIRED");
 
 				// Change the password
-				await this.adapter.updateById(user._id, { $set: {
-					password: await bcrypt.hash(ctx.params.password, 10),
-					passwordless: false,
-					verified: true,
-					resetToken: null,
-					resetTokenExpires: null
-				} });
+				await this.adapter.updateById(user._id, {
+					$set: {
+						password: await bcrypt.hash(ctx.params.password, 10),
+						passwordless: false,
+						verified: true,
+						resetToken: null,
+						resetTokenExpires: null
+					}
+				});
 
 				// Send password-changed email
 				this.sendMail(ctx, user, "password-changed");
@@ -506,9 +631,15 @@ module.exports = {
 		 */
 		link: {
 			params: {
-				id: { type: "string" },
-				provider: { type: "string" },
-				profile: { type: "object" },
+				id: {
+					type: "string"
+				},
+				provider: {
+					type: "string"
+				},
+				profile: {
+					type: "object"
+				},
 			},
 			async handler(ctx) {
 				const res = await this.link(ctx.params.id, ctx.params.provider, ctx.params.profile);
@@ -521,8 +652,13 @@ module.exports = {
 		 */
 		unlink: {
 			params: {
-				id: { type: "string", optional: true },
-				provider: { type: "string" }
+				id: {
+					type: "string",
+					optional: true
+				},
+				provider: {
+					type: "string"
+				}
 			},
 			async handler(ctx) {
 				const id = ctx.params.id ? ctx.params.id : ctx.meta.userID;
@@ -539,9 +675,18 @@ module.exports = {
 		 */
 		login: {
 			params: {
-				email: { type: "string", optional: false },
-				password: { type: "string", optional: true },
-				token: { type: "string", optional: true }
+				email: {
+					type: "string",
+					optional: false
+				},
+				password: {
+					type: "string",
+					optional: true
+				},
+				token: {
+					type: "string",
+					optional: true
+				}
 			},
 			rest: "GET /login",
 			graphql: {
@@ -552,13 +697,18 @@ module.exports = {
 
 				if (this.config["accounts.username.enabled"]) {
 					query = {
-						"$or": [
-							{ email: ctx.params.email },
-							{ username: ctx.params.email }
+						"$or": [{
+								email: ctx.params.email
+							},
+							{
+								username: ctx.params.email
+							}
 						]
 					};
 				} else {
-					query = { email: ctx.params.email };
+					query = {
+						email: ctx.params.email
+					};
 				}
 
 				// Get user
@@ -624,15 +774,29 @@ module.exports = {
 		 */
 		socialLogin: {
 			params: {
-				provider: { type: "string" },
-				profile: { type: "object" },
-				accessToken: { type: "string" },
-				refreshToken: { type: "string", optional: true },
+				provider: {
+					type: "string"
+				},
+				profile: {
+					type: "object"
+				},
+				accessToken: {
+					type: "string"
+				},
+				refreshToken: {
+					type: "string",
+					optional: true
+				},
 			},
 			async handler(ctx) {
-				const { provider, profile } = ctx.params;
+				const {
+					provider,
+					profile
+				} = ctx.params;
 
-				const query = { [`socialLinks.${provider}`]: profile.socialID };
+				const query = {
+					[`socialLinks.${provider}`]: profile.socialID
+				};
 				if (ctx.meta.user) {
 					// There is logged in user. Link to the logged in user
 					let user = await this.adapter.findOne(query);
@@ -654,8 +818,8 @@ module.exports = {
 
 				} else {
 					// No logged in user
-					if (!profile.email)
-						throw new MoleculerClientError("Missing e-mail address in social profile", 400, "ERR_NO_SOCIAL_EMAIL");
+					// if (!profile.email)
+					// 	throw new MoleculerClientError("Missing e-mail address in social profile", 400, "ERR_NO_SOCIAL_EMAIL");
 
 					let foundBySocialID = false;
 
@@ -716,7 +880,10 @@ module.exports = {
 		 */
 		enable2Fa: {
 			params: {
-				token: { type: "string", optional: true }
+				token: {
+					type: "string",
+					optional: true
+				}
 			},
 			rest: "GET /enable2Fa",
 			permissions: [C.ROLE_AUTHENTICATED],
@@ -727,11 +894,15 @@ module.exports = {
 
 				if (!ctx.params.token && (!user.totp || !user.totp.enabled)) {
 					// Generate a TOTP secret and send back otpauthURL & secret
-					const secret = speakeasy.generateSecret({ length: 10 });
-					await this.adapter.updateById(ctx.meta.userID, { $set: {
-						"totp.enabled": false,
-						"totp.secret": secret.base32
-					} });
+					const secret = speakeasy.generateSecret({
+						length: 10
+					});
+					await this.adapter.updateById(ctx.meta.userID, {
+						$set: {
+							"totp.enabled": false,
+							"totp.secret": secret.base32
+						}
+					});
 
 					const otpauthURL = speakeasy.otpauthURL({
 						secret: secret.ascii,
@@ -749,9 +920,11 @@ module.exports = {
 					if (!(await this.verify2FA(secret, ctx.params.token)))
 						throw new MoleculerClientError("Invalid token!", 400, "TWOFACTOR_INVALID_TOKEN");
 
-					await this.adapter.updateById(ctx.meta.userID, { $set: {
-						"totp.enabled": true,
-					} });
+					await this.adapter.updateById(ctx.meta.userID, {
+						$set: {
+							"totp.enabled": true,
+						}
+					});
 
 					return true;
 				}
@@ -779,10 +952,12 @@ module.exports = {
 				if (!(await this.verify2FA(secret, ctx.params.token)))
 					throw new MoleculerClientError("Invalid token!", 400, "TWOFACTOR_INVALID_TOKEN");
 
-				await this.adapter.updateById(ctx.meta.userID, { $set: {
-					"totp.enabled": false,
-					"totp.secret": null,
-				} });
+				await this.adapter.updateById(ctx.meta.userID, {
+					$set: {
+						"totp.enabled": false,
+						"totp.secret": null,
+					}
+				});
 
 				return true;
 			}
@@ -808,7 +983,9 @@ module.exports = {
 				const secret = user.totp.secret;
 				const token = this.generate2FaToken(secret);
 
-				return { token };
+				return {
+					token
+				};
 			}
 		},
 
@@ -827,7 +1004,9 @@ module.exports = {
 	methods: {
 
 		async getToken(user) {
-			return await this.generateJWT({ id: user._id.toString() });
+			return await this.generateJWT({
+				id: user._id.toString()
+			});
 		},
 
 		/**
@@ -838,7 +1017,9 @@ module.exports = {
 		 */
 		generateJWT(payload, expiresIn) {
 			return new this.Promise((resolve, reject) => {
-				return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: expiresIn || this.config["accounts.jwt.expiresIn"] }, (err, token) => {
+				return jwt.sign(payload, process.env.JWT_SECRET, {
+					expiresIn: expiresIn || this.config["accounts.jwt.expiresIn"]
+				}, (err, token) => {
 					if (err) {
 						this.logger.warn("JWT token generation error:", err);
 						return reject(new MoleculerRetryableError("Unable to generate token", 500, "UNABLE_GENERATE_TOKEN"));
@@ -868,20 +1049,24 @@ module.exports = {
 		},
 
 		async link(id, provider, profile) {
-			return await this.adapter.updateById(id, { $set: {
-				[`socialLinks.${provider}`]: profile.socialID,
-				verified: true, // if not verified yet via email
-				verificationToken: null
-			} });
+			return await this.adapter.updateById(id, {
+				$set: {
+					[`socialLinks.${provider}`]: profile.socialID,
+					verified: true, // if not verified yet via email
+					verificationToken: null
+				}
+			});
 		},
 
 		/**
 		 * Unlink account from a social account
 		 */
 		async unlink(id, provider) {
-			return await this.adapter.updateById(id, { $unset: {
-				[`socialLinks.${provider}`]: 1
-			} });
+			return await this.adapter.updateById(id, {
+				$unset: {
+					[`socialLinks.${provider}`]: 1
+				}
+			});
 		},
 
 		/**
@@ -893,12 +1078,16 @@ module.exports = {
 		async sendMagicLink(ctx, user) {
 			const token = this.generateToken();
 
-			const usr = await this.adapter.updateById(user._id, { $set: {
-				passwordlessToken: token,
-				passwordlessTokenExpires: Date.now() + 3600 * 1000 // 1 hour
-			} });
+			const usr = await this.adapter.updateById(user._id, {
+				$set: {
+					passwordlessToken: token,
+					passwordlessTokenExpires: Date.now() + 3600 * 1000 // 1 hour
+				}
+			});
 
-			return await this.sendMail(ctx, usr, "magic-link", { token });
+			return await this.sendMail(ctx, usr, "magic-link", {
+				token
+			});
 		},
 
 		/**
@@ -921,9 +1110,12 @@ module.exports = {
 						user,
 						site: this.configObj.site
 					})
-				}, { retries: 3, timeout: 5000 });
+				}, {
+					retries: 3,
+					timeout: 5000
+				});
 
-			} catch(err) {
+			} catch (err) {
 				/* istanbul ignore next */
 				this.logger.error("Send mail error!", err);
 				/* istanbul ignore next */
@@ -938,7 +1130,9 @@ module.exports = {
 		 * @param {String} email
 		 */
 		async getUserByEmail(ctx, email) {
-			return await this.adapter.findOne({ email });
+			return await this.adapter.findOne({
+				email
+			});
 		},
 
 		/**
@@ -948,7 +1142,9 @@ module.exports = {
 		 * @param {String} username
 		 */
 		async getUserByUsername(ctx, username) {
-			return await this.adapter.findOne({ username });
+			return await this.adapter.findOne({
+				username
+			});
 		},
 
 		/**
@@ -1053,8 +1249,7 @@ module.exports = {
 	/**
 	 * Service started lifecycle event handler
 	 */
-	started() {
-	},
+	started() {},
 
 	/**
 	 * Service stopped lifecycle event handler
