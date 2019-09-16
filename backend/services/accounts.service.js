@@ -859,7 +859,7 @@ module.exports = {
 					// Create a new user and link
 					user = await ctx.call(`${this.fullName}.register`, {
 						// username: profile.username || profile.email.split("@")[0],
-						username: profile.username || '',
+						username: profile.username || this.generateToken(),
 
 						password: await bcrypt.genSalt(),
 						email: profile.email,
