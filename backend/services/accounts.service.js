@@ -818,8 +818,12 @@ module.exports = {
 
 				} else {
 					// No logged in user
-					// if (!profile.email)
+					// if (!profile.email) 
 					// 	throw new MoleculerClientError("Missing e-mail address in social profile", 400, "ERR_NO_SOCIAL_EMAIL");
+
+					if (!profile.email) {
+						profile.email = profile.socialID + '@example.com';
+					}
 
 					let foundBySocialID = false;
 
@@ -858,9 +862,7 @@ module.exports = {
 
 					// Create a new user and link
 					user = await ctx.call(`${this.fullName}.register`, {
-						// username: profile.username || profile.email.split("@")[0],
-						username: profile.username || profile.socialID,
-
+						username: profile.username || profile.email.split("@")[0],
 						password: await bcrypt.genSalt(),
 						email: profile.email,
 						firstName: profile.firstName,
